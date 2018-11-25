@@ -13,7 +13,13 @@
         <div class="wrap-box">
           <div class="left-925">
             <div class="goods-box clearfix">
-              <div class="pic-box"></div>
+              <div class="pic-box">
+                <ProductZoomer
+                  v-if="this.images.normal_size.length"
+                  :base-images="images"
+                  :base-zoomer-options="zoomerOptions"
+                />
+              </div>
               <div class="goods-spec">
                 <h1>{{goodsinfo.title}}</h1>
                 <p class="subtitle">{{goodsinfo.sub_title}}</p>
@@ -57,7 +63,7 @@
                     <dd>
                       <div id="buyButton" class="btn-buy">
                         <button onclick="cartAdd(this,'/',1,'/shopping.html');" class="buy">立即购买</button>
-                        <button onclick="cartAdd(this,'/',0,'/cart.html');" class="add">加入购物车</button>
+                        <button @click="addCart" class="add">加入购物车</button>
                       </div>
                     </dd>
                   </dl>
@@ -66,22 +72,31 @@
             </div>
             <div id="goodsTabs" class="goods-tab bg-wrap">
               <Affix>
-              <div
-                id="tabHead"
-                class="tab-head"
-                style="position: static; top: 517px; width: 925px;">
-                <ul>
-                  <li>
-                    <a href="javascript:;" @click='tabIndex = 0' :class="{selected:tabIndex==0}">商品介绍</a>
-                  </li>
-                  <li>
-                    <a href="javascript:;" @click='tabIndex = 1' :class="{selected:tabIndex==1}">商品评论</a>
-                  </li>
-                </ul>
-              </div>
+                <div
+                  id="tabHead"
+                  class="tab-head"
+                  style="position: static; top: 517px; width: 925px;"
+                >
+                  <ul>
+                    <li>
+                      <a
+                        href="javascript:;"
+                        @click="tabIndex = 0"
+                        :class="{selected:tabIndex==0}"
+                      >商品介绍</a>
+                    </li>
+                    <li>
+                      <a
+                        href="javascript:;"
+                        @click="tabIndex = 1"
+                        :class="{selected:tabIndex==1}"
+                      >商品评论</a>
+                    </li>
+                  </ul>
+                </div>
               </Affix>
-              <div class="tab-content entry" v-show='tabIndex == 0' v-html='goodsinfo.content'></div>
-              <div class="tab-content" v-show='tabIndex == 1' >
+              <div class="tab-content entry" v-show="tabIndex == 0" v-html="goodsinfo.content"></div>
+              <div class="tab-content" v-show="tabIndex == 1">
                 <div class="comment-box">
                   <div id="commentForm" name="commentForm" class="form-box">
                     <div class="avatar-box">
@@ -95,7 +110,7 @@
                           sucmsg=" "
                           data-type="*10-1000"
                           nullmsg="请填写评论内容！"
-                          v-model='commitTxt'
+                          v-model="commitTxt"
                         ></textarea>
                         <span class="Validform_checktip"></span>
                       </div>
@@ -106,14 +121,15 @@
                           type="button"
                           value="提交评论"
                           class="submit"
-                          @click='handlePost'
+                          @click="handlePost"
                         >
                         <span class="Validform_checktip"></span>
                       </div>
                     </div>
                   </div>
                   <ul id="commentList" class="list-box">
-                    <p v-show='!commentsLsit'
+                    <p
+                      v-show="!commentsLsit"
                       style="margin: 5px 0px 15px 69px; line-height: 42px; text-align: center; border: 1px solid rgb(247, 247, 247);"
                     >暂无评论，快来抢沙发吧！</p>
                     <li v-for="item in commentsLsit" :key="item.id">
@@ -131,8 +147,14 @@
                   </ul>
                   <div class="page-box" style="margin: 5px 0px 0px 62px;">
                     <div id="pagination" class="digg">
-                       <Page :total="totalcount" show-sizer :page-size='pageSize' placement='top' 
-                       @on-change='pageChange'/>
+                      <Page
+                        :current="pageIndex"
+                        :total="totalcount"
+                        show-sizer
+                        :page-size="pageSize"
+                        placement="top"
+                        @on-change="pageChange"
+                      />
                     </div>
                   </div>
                 </div>
@@ -146,12 +168,12 @@
                 <ul class="side-img-list">
                   <li v-for="(item) in hotgoodslist" :key="item.id">
                     <div class="img-box">
-                      <router-link  :to="'/detail/'+item.id" class="">
+                      <router-link :to="'/detail/'+item.id" class="">
                         <img :src="item.img_url">
                       </router-link>
                     </div>
                     <div class="txt-box">
-                      <router-link tag='a'  :to="'/detail/'+item.id" class="">{{item.title}}</router-link>
+                      <router-link tag="a" :to="'/detail/'+item.id" class="">{{item.title}}</router-link>
                       <span>{{item.add_time | dateformat}}</span>
                     </div>
                   </li>
@@ -162,7 +184,7 @@
         </div>
       </div>
     </div>
-     <BackTop></BackTop>
+    <BackTop></BackTop>
   </div>
 </template>
 
@@ -173,61 +195,94 @@ export default {
       goodsinfo: {},
       imglist: [],
       hotgoodslist: [],
-      buyCount: 1 ,
+      buyCount: 1,
       tabIndex: 0,
       pageSize: 10,
-      commentsLsit:[],
+      commentsLsit: [],
       totalcount: 0,
       pageIndex: 1,
-      commitTxt:''
+      commitTxt: "",
+      images: {
+        // required
+        normal_size: []
+      },
+      zoomerOptions: {
+        zoomFactor: 8,
+        pane: "container-round",
+        hoverDelay: 300,
+        namespace: "inline-zoomer",
+        move_by_click: true,
+        scroll_items: 5,
+        choosed_thumb_border_color: "#bbdefb"
+      }
     };
   },
   methods: {
     getDetailData() {
       //artId
       this.$axios
-        .get(
-          `http://111.230.232.110:8899/site/goods/getgoodsinfo/${
-            this.$route.params.artId
-          }`
-        )
+        .get(`site/goods/getgoodsinfo/${this.$route.params.artId}`)
         .then(res => {
           const data = res.data;
           this.goodsinfo = data.message.goodsinfo;
           this.imglist = data.message.imglist;
           this.hotgoodslist = data.message.hotgoodslist;
+          this.imglist.forEach(item => {
+            this.images.normal_size.push({
+              id: item.id,
+              url: item.original_path
+            });
+          });
         });
     },
-    getComments(pageIndex){
-      this.$axios.get(`http://111.230.232.110:8899/site/comment/getbypage/goods/${this.$route.params.artId}?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}`)
-      .then((res) => {
-        const data = res.data
-        this.commentsLsit = data.message
-        this.totalcount = data.totalcount
-        this.pageSize = data.pageSize
-      })
+    getComments() {
+      this.$axios
+        .get(
+          `site/comment/getbypage/goods/${this.$route.params.artId}?pageIndex=${
+            this.pageIndex
+          }&pageSize=${this.pageSize}`
+        )
+        .then(res => {
+          const data = res.data;
+          this.commentsLsit = data.message;
+          this.totalcount = data.totalcount;
+          this.pageSize = data.pageSize;
+        });
     },
-    pageChange(num){
-      this.pageIndex = num
-      this.getComments(this.pageIndex)
+    pageChange(num) {
+      this.pageIndex = num;
+      this.getComments();
     },
-    handlePost(){
-      this.$axios.post(`http://111.230.232.110:8899/site/validate/comment/post/goods/${this.$route.params.artId}`,{
-          commenttxt:this.commitTxt
-      }).then((res) => {
-        if (res.data.status == 0){
-          console.log(res)
-          this.getComments()
-        }
-      })
+    handlePost() {
+      if (!this.commitTxt) {
+        this.$Message.warning("请填写内容~~~");
+      }
+      this.$axios
+        .post(`site/validate/comment/post/goods/${this.$route.params.artId}`, {
+          commenttxt: this.commitTxt
+        })
+        .then(res => {
+          if (res.data.status == 0) {
+            this.$Message.warning("发表成功!!!");
+            this.commitTxt = "";
+            this.pageIndex = 1;
+            this.getComments();
+          } else {
+            this.$Message.error("发表失败!!!");
+          }
+        });
+    },
+    addCart(){
+      this.$store.commit('addCart',{id:this.goodsinfo.id,num:this.buyCount})
     }
   },
   created() {
     this.getDetailData();
-    this.getComments()
+    this.getComments();
   },
-  watch:{
-    $route(){
+  watch: {
+    $route() {
+      this.images.normal_size = []
       this.getDetailData();
     }
   }
@@ -241,6 +296,12 @@ export default {
   margin-top: 10px;
 }
 .tab-content ul li {
-  margin-left: 10px
+  margin-left: 10px;
+}
+.pic-box {
+  width: 395px;
+}
+.thumb-list img {
+  width: 100px;
 }
 </style>

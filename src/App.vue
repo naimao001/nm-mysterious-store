@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    
     <div class="header">
         <!-- 1.0 导航栏头部 -->
         <div class="head-top">
@@ -22,11 +23,11 @@
                         <a>退出</a>
                         <strong>|</strong>
                     </span>
-                    <a href="" class="">
+                    <router-link to='/shopcar' class="">
                         <i class="iconfont icon-cart"></i>购物车(
                         <span id="shoppingCartCount">
-                            <span>4</span>
-                        </span>)</a>
+                            <span>{{$store.getters.totalCount}}</span>
+                        </span>)</router-link>
                 </div>
             </div>
         </div>

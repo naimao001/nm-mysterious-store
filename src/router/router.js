@@ -2,10 +2,13 @@ import Vue from "vue"
 import VueRouter from "vue-router"
 import Index from "../components/Index.vue"
 import Detail from "../components/Detail.vue"
+import ShopCar from "../components/ShopCar.vue"
 Vue.use(VueRouter)
 
-let routes = [ { path: "/", name: "Index", component: Index },
-{path:"/detail/:artId",name:"Detail",component: Detail}
+let routes = [ 
+{ path: "/", name: "Index", component: Index },
+{path:"/detail/:artId",name:"Detail",component: Detail},
+{path:"/shopcar",name:"ShopCar",component: ShopCar}
 ]
 
 const router = new VueRouter({

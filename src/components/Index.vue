@@ -121,7 +121,7 @@ export default {
   },
   methods: {
     getBannerData(){
-    this.$axios.get('http://111.230.232.110:8899/site/goods/gettopdata/goods')
+    this.$axios.get('site/goods/gettopdata/goods')
     .then((res) => {
   const data = res.data
       this.catelist = data.message.catelist
@@ -130,7 +130,7 @@ export default {
     })
     },
     getGoodsData(){
-     this.$axios.get('http://111.230.232.110:8899/site/goods/getgoodsgroup')
+     this.$axios.get('site/goods/getgoodsgroup')
     .then((res) => {
       const data = res.data
       this.goodslist = data.message
