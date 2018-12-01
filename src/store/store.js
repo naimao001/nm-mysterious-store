@@ -19,10 +19,10 @@ const store = new Vuex.Store({
     },
     updateCartData(state, obj) {
       state.cartData = obj
+    },
+    delGoodsById(state,id){
+     Vue.delete(state.cartData,id)
     }
-    // delGoodsById(state,id){
-    //  Vue.delete(state.cartData,id)
-    // }
     ,
     changeLogin(state,islogin){
       state.isLogin = islogin

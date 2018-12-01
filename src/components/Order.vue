@@ -260,8 +260,8 @@ export default {
           area: { code: 440306, value: "宝安区" }
         },
         payment_id:6,
-        express_id:1,
-        expressMoment:24
+        express_id:"1",
+        expressMoment:"24"
       },
       rules: {
         accept_name: [
@@ -288,18 +288,22 @@ export default {
             this.ruleForm.goodsAmount = this.totalPrice
             this.ruleForm.goodsids = this.$route.params.ids
             let obj = {}
-            this.goodsList.forEach(v => {
+            this.goodsList.forEach(v => { 
               obj[v.id] = v.buycount 
             })
             this.ruleForm.cargoodsobj = obj 
             this.$axios.post('site/validate/order/setorder',this.ruleForm)
             .then((res) => {
               if (res.data.status==0){
+                let idsArr = this.$route.params.ids.split(',')
+                for (let i = 0; i < idsArr.length; i++) {
+                    this.$store.commit('delGoodsById',idsArr[i])            
+                }
                 this.$router.push('/payOrder/'+res.data.message.orderid)
               }
             })
           } else {
-            this.$Message.warnning('?????')
+            this.$Message.warning('?????')
             return false;
           }
         });

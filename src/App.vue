@@ -17,7 +17,7 @@
               <strong>|</strong>
             </span>
             <span v-show="$store.state.isLogin">
-              <a href class>会员中心</a>
+              <router-link to="/vipcenter">会员中心</router-link>
               <strong>|</strong>
               <a @click="handleLoginOut">退出</a>
               <strong>|</strong>
@@ -38,9 +38,9 @@
           <div id="menu2" class="nav-box menuhd">
             <ul>
               <li class="index">
-                <a href="#" class>
+                <router-link to="/" >
                   <span class="out" style="top: 0px;">首页</span>
-                </a>
+                </router-link>
               </li>
               <li class="news">
                 <a href="#" class>
